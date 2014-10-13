@@ -1,5 +1,6 @@
 Unisson Data Server
 ===================
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/UnissonCo/dataserver?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 A temporary space for experimenting with REST APIs.
 In a near future, the data server will become a framework for developing distributed web services.
