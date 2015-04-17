@@ -64,9 +64,9 @@ class Project(models.Model):
 
 class ProjectCommunity(models.Model):
     """
-    This class help us to find the whole community linked to a project. We use ObjectProfileLink in 
+    This class helps us to find the whole community linked to a project. We use ObjectProfileLink in 
     order to record a link between a user profile and the ProjectCommunity. With ObjectProfileLink, 
-    we car have a "level of implication" of the member in the Community
+    we can have a "level of implication" of the member in the community
     """
-    project = models.ForeignKey(Project, related_name='project_community'))
+    project = models.ForeignKey(Project, related_name='community'))
 
