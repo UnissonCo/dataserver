@@ -61,13 +61,6 @@ class Project(models.Model):
         """ pep257, you know I love you. """
         return self.title
 
-class ProjectCommunity(models.Model):
-    """
-    This class helps us to find the whole community linked to a project. We use ObjectProfileLink in 
-    order to record a link between a user profile and the ProjectCommunity. With ObjectProfileLink, 
-    we can have a "level of implication" of the member in the community
-    """
-    project = models.ForeignKey(Project, related_name='community'))
 
 # XXX/TODO: obsolete
 class ProjectTeam(models.Model):
