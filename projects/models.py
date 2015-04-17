@@ -57,12 +57,13 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     progress = models.ForeignKey(ProjectProgress, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    groups = models.ManyToManyField(Group, null=True, blank=True)
 
     def __unicode__(self):
         """ pep257, you know I love you. """
         return self.title
 
+class Community(models.Model):
+    project = models.ForeignKey(Project)
 
 # XXX/TODO: obsolete
 class ProjectTeam(models.Model):
