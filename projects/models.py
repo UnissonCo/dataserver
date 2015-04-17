@@ -62,18 +62,11 @@ class Project(models.Model):
         """ pep257, you know I love you. """
         return self.title
 
-class Community(models.Model):
-    project = models.ForeignKey(Project)
-
-# XXX/TODO: obsolete
-class ProjectTeam(models.Model):
-
-    """ A project team.
-
-    .. todo:: this model is probably obsolete.
-        Someones knowing the truth checks it?
-        Does the project group replaces it ?
+class ProjectCommunity(models.Model):
     """
+    This class help us to find the whole community linked to a project. We use ObjectProfileLink in 
+    order to record a link between a user profile and the ProjectCommunity. With ObjectProfileLink, 
+    we car have a "level of implication" of the member in the Community
+    """
+    project = models.ForeignKey(Project, related_name='project_community'))
 
-    project = models.ForeignKey(Project)
-    members = models.ManyToManyField(Profile)
