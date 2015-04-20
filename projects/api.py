@@ -1,4 +1,4 @@
-    from tastypie.resources import ModelResource
+from tastypie.resources import ModelResource
 from tastypie import fields
 
 from .models import Project, ProjectProgressRange, ProjectProgress, ProjectTeam
@@ -49,13 +49,13 @@ class ProjectResource(ModelResource):
         always_return_data = True
         authentication = AnonymousApiKeyAuthentication()
         authorization = DjangoAuthorization()
-        
+
         filtering = {
             'slug': ('exact',),
             'id' : ('exact', ),
             'location': ALL_WITH_RELATIONS,
         }
-        
+
 # XXX/TODO: obsolete this class in favor of ObjectProfileLink
 # class ProjectTeamResource(ModelResource):
 #     project = fields.ToOneField(ProjectResource, "project")

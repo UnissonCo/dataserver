@@ -6,7 +6,6 @@ from autoslug.fields import AutoSlugField
 from taggit.managers import TaggableManager
 from scout.models import Place
 from accounts.models import Profile
-    
 
 class ProjectProgressRange(models.Model):
 
