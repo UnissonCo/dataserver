@@ -1,27 +1,37 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-from django.contrib.contenttypes.models import ContentType
-from projects.models import ProjectTeam
-from accounts.models import ObjectProfileLink
 
-class Migration(DataMigration):
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        for team in ProjectTeam.objects.all():
-            for member in team.members.all():
-                ObjectProfileLink.objects.get_or_create(content_type = ContentType.objects.get_for_model(team.project),
-                                                       object_id = team.project.id,
-                                                       profile = member,
-                                                       level = 0,
-                                                       isValidated = True)
-                team.delete()
+        # Adding model 'Community'
+        db.create_table(u'projects_community', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('project', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['projects.Project'])),
+        ))
+        db.send_create_signal(u'projects', ['Community'])
+
+        # Removing M2M table for field groups on 'Project'
+        db.delete_table(db.shorten_name(u'projects_project_groups'))
+
 
     def backwards(self, orm):
-        "Write your backwards methods here."
+        # Deleting model 'Community'
+        db.delete_table(u'projects_community')
+
+        # Adding M2M table for field groups on 'Project'
+        m2m_table_name = db.shorten_name(u'projects_project_groups')
+        db.create_table(m2m_table_name, (
+            ('id', models.AutoField(verbose_name='ID', primary_key=True, auto_created=True)),
+            ('project', models.ForeignKey(orm[u'projects.project'], null=False)),
+            ('group', models.ForeignKey(orm[u'auth.group'], null=False))
+        ))
+        db.create_unique(m2m_table_name, ['project_id', 'group_id'])
+
 
     models = {
         u'accounts.profile': {
@@ -67,14 +77,20 @@ class Migration(DataMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
+        u'projects.community': {
+            'Meta': {'object_name': 'Community'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.Project']"})
+        },
         u'projects.project': {
             'Meta': {'object_name': 'Project'},
             'baseline': ('django.db.models.fields.CharField', [], {'max_length': '250', 'null': 'True', 'blank': 'True'}),
-            'begin_date': ('django.db.models.fields.DateField', [], {}),
+            'begin_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'created_on': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             'end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'location': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scout.PostalAddress']", 'null': 'True', 'blank': 'True'}),
+            'location': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scout.Place']", 'null': 'True', 'blank': 'True'}),
             'progress': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.ProjectProgress']", 'null': 'True', 'blank': 'True'}),
             'slug': ('autoslug.fields.AutoSlugField', [], {'unique': 'True', 'max_length': '50', 'populate_from': 'None', 'unique_with': '()'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
@@ -101,17 +117,22 @@ class Migration(DataMigration):
             'members': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['accounts.Profile']", 'symmetrical': 'False'}),
             'project': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['projects.Project']"})
         },
+        u'scout.place': {
+            'Meta': {'object_name': 'Place'},
+            'address': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'place'", 'to': u"orm['scout.PostalAddress']"}),
+            'geo': ('django.contrib.gis.db.models.fields.PointField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
+        },
         u'scout.postaladdress': {
             'Meta': {'object_name': 'PostalAddress'},
-            'address_locality': ('django.db.models.fields.CharField', [], {'max_length': '255', 'null': 'True'}),
-            'address_region': ('django.db.models.fields.CharField', [], {'max_length': '50', 'null': 'True'}),
+            'address_locality': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'address_region': ('django.db.models.fields.CharField', [], {'max_length': '50', 'blank': 'True'}),
             'country': ('django.db.models.fields.CharField', [], {'max_length': '2'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'post_office_box_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'null': 'True'}),
-            'postal_code': ('django.db.models.fields.CharField', [], {'max_length': '30', 'null': 'True'}),
-            'street_address': ('django.db.models.fields.TextField', [], {'null': 'True'})
+            'post_office_box_number': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
+            'postal_code': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
+            'street_address': ('django.db.models.fields.TextField', [], {'blank': 'True'})
         }
     }
 
     complete_apps = ['projects']
-    symmetrical = True

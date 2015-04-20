@@ -6,9 +6,6 @@ from autoslug.fields import AutoSlugField
 from taggit.managers import TaggableManager
 from scout.models import Place
 from accounts.models import Profile
-# from django.db.models.signals import post_save
-# from django.dispatch.dispatcher import receiver
-
 
 class ProjectProgressRange(models.Model):
 
@@ -57,22 +54,7 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     progress = models.ForeignKey(ProjectProgress, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    groups = models.ManyToManyField(Group, null=True, blank=True)
 
     def __unicode__(self):
         """ pep257, you know I love you. """
         return self.title
-
-
-# XXX/TODO: obsolete
-class ProjectTeam(models.Model):
-
-    """ A project team.
-
-    .. todo:: this model is probably obsolete.
-        Someones knowing the truth checks it?
-        Does the project group replaces it ?
-    """
-
-    project = models.ForeignKey(Project)
-    members = models.ManyToManyField(Profile)
