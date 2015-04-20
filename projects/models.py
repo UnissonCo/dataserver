@@ -55,22 +55,7 @@ class Project(models.Model):
     end_date = models.DateField(null=True, blank=True)
     progress = models.ForeignKey(ProjectProgress, null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
-    groups = models.ManyToManyField(Group, null=True, blank=True)
 
     def __unicode__(self):
         """ pep257, you know I love you. """
         return self.title
-
-
-# XXX/TODO: obsolete
-class ProjectTeam(models.Model):
-
-    """ A project team.
-
-    .. todo:: this model is probably obsolete.
-    Someones knowing the truth checks it?
-    Does the project group replaces it ?
-    """
-    
-    project = models.ForeignKey(Project)
-    members = models.ManyToManyField(Profile)
